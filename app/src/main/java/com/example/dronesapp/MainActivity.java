@@ -5,9 +5,17 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.ParcelUuid;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,17 +25,22 @@ import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    static UUID mUUID;
+    ParcelUuid[] uuids;
     InputStream inputStream = null;
     TextView text;
     OutputStream outputStream;
     BluetoothSocket btSocket = null;
+    BluetoothAdapter adapter;
     Button sendButton;
     Button closeButton;
+    ListView listView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -35,7 +48,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        text = findViewById(R.id.txt);
+        listView = findViewById(R.id.uuids);
+
+        adapter = BluetoothAdapter.getDefaultAdapter();
+        Method getUuidsMethod = null;
+        try {
+            getUuidsMethod = BluetoothAdapter.class.getDeclaredMethod("getUuids", null);
+
+            uuids = (ParcelUuid[]) getUuidsMethod.invoke(adapter, null);
+            text = findViewById(R.id.txt);
+
+            for (ParcelUuid uuid : uuids) {
+               listView.
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        }
 
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
